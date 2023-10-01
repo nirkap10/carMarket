@@ -46,13 +46,13 @@ carMarket.addNewCToAgency = function(carObj,agencyNameOrId){
     carMarket.changeCashCredit(agencyNameOrId,carObj.price,'-',cash);
 }
 
-let carobj1 =               {
-    brand: "bmw",
-    name: "3",
-    year: 2010,
-    price: 137000,
-    carNumber: "AZJZ4",
-  }
+// let carobj1 =               {
+//     brand: "bmw",
+//     name: "3",
+//     year: 2010,
+//     price: 137000,
+//     carNumber: "AZJZ4",
+//   }
 
   //Remove a car from an agency's inventory.
   carMarket.removeCarFromAgency = function(carNumber,agencyNameOrId,brand){
@@ -254,3 +254,30 @@ carMarket.getCheapestCar = function(){
 }
 // let car = carMarket.getCheapestCar();
 // console.log(car);
+
+
+//Implement a sellCar function that sells a car to a specific customer
+carMarket.sellCar = function(agency,carNumber, customer) {
+    let agency1 = carMarket.searchForAgency(agency);
+    let theCar = carMarket.allCars().find(car => car.carNumber === carNumber);
+    let customer1 = carMarket.searchCustomer(customer);
+    if(theCar === undefined){
+        return console.log('car doesnt exist in the market');
+    }
+    if(theCar.ownerId !== carMarket.sellers[agency1].agencyId){
+        return console.log('the agency doesnt own the car');
+    }
+    if(theCar.price > carMarket.customers[customer1].cash){
+        return console.log('customer doesnt have enough money to buy the car :(');
+    }
+    carMarket.removeCarFromAgency(carNumber,agency,theCar.brand);
+    carMarket.customers[customer1].cars.push(theCar);
+    carMarket.changeCashOfCustomer(customer,theCar.price,'-');
+    carMarket.taxesAuthority.numberOfTransactions += 1;
+    carMarket.taxesAuthority.sumOfAllTransactions += theCar.price;
+    console.log('successful sell');
+}
+
+carMarket.sellCar("Best Deal","AZJZ4","Will Reyes");
+
+
